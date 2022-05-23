@@ -1,3 +1,9 @@
+//! # quake-inverse-sqrt
+//!
+//! This crate implements a trait for all numeric base types to give them the ability to compute
+//! their own inverse square root using the infamous Quake III algorithm.
+//!
+//! The result is approximated in favour of speed of execution.
 const THREE_HALFS: f32 = 1.5;
 const WTF: u32 = 0x5f3759df;
 
