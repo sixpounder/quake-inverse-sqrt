@@ -31,9 +31,7 @@ impl QSqrt for f32 {
         let x2: f32 = self * 0.5;
 
         // Evil bit hack
-        unsafe {
-            i = std::mem::transmute::<Self, u32>(y);
-        }
+        i = y.to_bits();
 
         // What the f*ck
         i = WTF - (i >> 1);
