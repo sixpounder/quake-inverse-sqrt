@@ -1,7 +1,7 @@
 [package]
 name = "quake-inverse-sqrt"
 description = "A rust implementation of the Quake Inverse Square root alghorithm"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license = "MIT"
 keywords = ["math", "sqrt"]

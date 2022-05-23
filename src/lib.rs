@@ -9,14 +9,18 @@ const WTF: u32 = 0x5f3759df;
 
 #[derive(Debug)]
 pub enum QSqrtError {
-    Overflow
+    Overflow,
 }
 
 /// A trait to implement fast inverse square root for
 /// a variety of types
 pub trait QSqrt {
     type Output;
+
+    /// Computes the fast inverse square root of `self`
     fn fast_inverse_sqrt(&self) -> Result<Self::Output, QSqrtError>;
+
+    /// Like `fast_inverse_sqrt` but panics on errors
     fn fast_inverse_sqrt_unchecked(&self) -> Self::Output {
         self.fast_inverse_sqrt().unwrap()
     }
@@ -36,9 +40,7 @@ impl QSqrt for f32 {
         // What the f*ck
         i = WTF - (i >> 1);
 
-        unsafe {
-            y = std::mem::transmute::<u32, Self>(i);
-        }
+        y = f32::from_bits(i);
 
         // Newton iteration
         y = y * (THREE_HALFS - (x2 * y * y));
@@ -74,66 +76,33 @@ macro_rules! impl_types {
     };
 }
 
-impl_types!(u32, u16, u8, i32, i16, i8, usize, isize);
+impl_types!(u64, u32, u16, u8, i64, i32, i16, i8, usize, isize);
 
 #[cfg(test)]
 mod tests {
     use crate::QSqrt;
 
-    #[test]
-    fn float_input() {
-        let x: f32 = 4.;
-        let res = x.fast_inverse_sqrt_unchecked();
-        assert!(res > 0.49 && res < 0.51);
+    macro_rules! make_test {
+        ($name: tt, $ty: ty, $value: expr, $expected_lower_bound: expr, $expected_upper_bound: expr) => {
+            #[test]
+            fn $name() {
+                let x: $ty = $value;
+                let res = x.fast_inverse_sqrt_unchecked();
+                assert!(res > $expected_lower_bound && res < $expected_upper_bound);
+            }
+        };
     }
 
-    #[test]
-    fn float_64_input() {
-        let x: f64 = 4.;
-        let res = x.fast_inverse_sqrt_unchecked();
-        assert!(res > 0.49 && res < 0.51);
-    }
-
-    #[test]
-    fn uint32_input() {
-        let x: u32 = 4;
-        let res = x.fast_inverse_sqrt_unchecked();
-        assert!(res > 0.49 && res < 0.51);
-    }
-
-    #[test]
-    fn uint16_input() {
-        let x: u16 = 4;
-        let res = x.fast_inverse_sqrt_unchecked();
-        assert!(res > 0.49 && res < 0.51);
-    }
-
-    #[test]
-    fn uint8_input() {
-        let x: u8 = 4;
-        let res = x.fast_inverse_sqrt_unchecked();
-        assert!(res > 0.49 && res < 0.51);
-    }
-
-    #[test]
-    fn int32_input() {
-        let x: i32 = 4;
-        let res = x.fast_inverse_sqrt_unchecked();
-        assert!(res > 0.49 && res < 0.51);
-    }
-
-    #[test]
-    fn int16_input() {
-        let x: i16 = 4;
-        let res = x.fast_inverse_sqrt_unchecked();
-        assert!(res > 0.49 && res < 0.51);
-    }
-
-    #[test]
-    fn int8_input() {
-        let x: i8 = 4;
-        let res = x.fast_inverse_sqrt_unchecked();
-        assert!(res > 0.49 && res < 0.51);
-    }
+    make_test!(f32_input, f32, 4., 0.49, 0.51);
+    make_test!(f64_input, f64, 4., 0.49, 0.51);
+    make_test!(u64_input, u64, 4, 0.49, 0.51);
+    make_test!(u32_input, u32, 4, 0.49, 0.51);
+    make_test!(u16_input, u16, 4, 0.49, 0.51);
+    make_test!(u8_input, i8, 4, 0.49, 0.51);
+    make_test!(i64_input, i64, 4, 0.49, 0.51);
+    make_test!(i32_input, i32, 4, 0.49, 0.51);
+    make_test!(i16_input, i16, 4, 0.49, 0.51);
+    make_test!(i8_input, i8, 4, 0.49, 0.51);
 }
+
 
