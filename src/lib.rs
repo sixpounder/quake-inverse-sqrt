@@ -4,6 +4,13 @@
 //! their own inverse square root using the infamous Quake III algorithm.
 //!
 //! The result is approximated in favour of speed of execution.
+//!
+//! # Example
+//!
+//! ```
+//! let num: f32 = 4.0.fast_inverse_sqrt();
+//! assert!(num > 0.49 && num < 0.51);
+//! ```
 const THREE_HALFS: f32 = 1.5;
 const WTF: u32 = 0x5f3759df;
 
