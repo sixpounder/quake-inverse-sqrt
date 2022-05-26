@@ -3,7 +3,7 @@ name = "quake-inverse-sqrt"
 description = "A rust implementation of the Quake Inverse Square root alghorithm"
 version = "0.1.2"
 edition = "2021"
-license = "MIT"
+license = "GPL-3.0-only"
 keywords = ["math", "sqrt"]
 categories = ["mathematics"]
 
